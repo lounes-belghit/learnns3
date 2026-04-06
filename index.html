@@ -1,0 +1,2220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ns-3 Visual Learning Guide</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0e1a;
+            --bg2: #111827;
+            --bg3: #1a2236;
+            --border: rgba(255, 255, 255, 0.07);
+            --border2: rgba(255, 255, 255, 0.14);
+            --text: #e8eaf0;
+            --muted: #7a8499;
+            --accent: #00d4aa;
+            --accent2: #4f8ef7;
+            --accent3: #f7934f;
+            --accent4: #c084fc;
+            --red: #f87171;
+            --yellow: #fbbf24;
+            --green: #34d399;
+            --mono: 'Space Mono', monospace;
+            --sans: 'DM Sans', sans-serif;
+            --serif: 'DM Serif Display', serif;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--sans);
+            font-size: 15px;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ── NAV ── */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(10, 14, 26, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            height: 58px;
+            gap: 8px;
+        }
+
+        .nav-logo {
+            font-family: var(--mono);
+            font-size: 13px;
+            color: var(--accent);
+            letter-spacing: 0.05em;
+            margin-right: auto;
+        }
+
+        .nav-logo span {
+            color: var(--muted);
+        }
+
+        .nav-link {
+            font-size: 12px;
+            color: var(--muted);
+            padding: 6px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: all .2s;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-family: var(--sans);
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--text);
+            background: var(--bg3);
+        }
+
+        /* ── HERO ── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 100px 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0, 212, 170, 0.06) 0%, transparent 70%), radial-gradient(ellipse 60% 40% at 80% 80%, rgba(79, 142, 247, 0.05) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 212, 170, 0.08);
+            border: 1px solid rgba(0, 212, 170, 0.2);
+            border-radius: 20px;
+            padding: 5px 14px 5px 10px;
+            font-size: 11px;
+            font-family: var(--mono);
+            color: var(--accent);
+            margin-bottom: 28px;
+            animation: fadeUp .6s ease both;
+        }
+
+        .hero-badge::before {
+            content: '●';
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0.3
+            }
+        }
+
+        h1 {
+            font-family: var(--serif);
+            font-size: clamp(2.8rem, 6vw, 5rem);
+            font-weight: 400;
+            line-height: 1.05;
+            margin-bottom: 20px;
+            animation: fadeUp .7s .1s ease both;
+        }
+
+        h1 em {
+            font-style: italic;
+            color: var(--accent);
+        }
+
+        .hero-sub {
+            font-size: 1.05rem;
+            color: var(--muted);
+            max-width: 520px;
+            margin: 0 auto 40px;
+            animation: fadeUp .7s .2s ease both;
+            line-height: 1.8;
+        }
+
+        .hero-ctas {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            animation: fadeUp .7s .3s ease both;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 11px 22px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all .2s;
+            cursor: pointer;
+            border: none;
+            font-family: var(--sans);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #0a0e1a;
+        }
+
+        .btn-primary:hover {
+            background: #00bfa0;
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border2);
+            color: var(--text);
+        }
+
+        .btn-outline:hover {
+            background: var(--bg3);
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 40px;
+            margin-top: 60px;
+            animation: fadeUp .7s .4s ease both;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-val {
+            font-family: var(--mono);
+            font-size: 1.6rem;
+            color: var(--accent);
+        }
+
+        .stat-lbl {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(16px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        /* ── GRID DOTS ── */
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+            background-size: 32px 32px;
+            pointer-events: none;
+        }
+
+        /* ── SECTIONS ── */
+        section {
+            padding: 80px 2rem;
+            max-width: 1060px;
+            margin: 0 auto;
+        }
+
+        .section-eyebrow {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--accent);
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-family: var(--serif);
+            font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+            font-weight: 400;
+            line-height: 1.15;
+            margin-bottom: 14px;
+        }
+
+        .section-sub {
+            color: var(--muted);
+            max-width: 560px;
+            margin-bottom: 40px;
+            line-height: 1.8;
+        }
+
+        /* ── CARDS ── */
+        .card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 24px 28px;
+        }
+
+        .card-sm {
+            padding: 18px 20px;
+            border-radius: 10px;
+        }
+
+        /* ── ABSTRACTION STACK ── */
+        .stack {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .stack-layer {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .stack-layer:hover {
+            transform: translateX(4px);
+        }
+
+        .stack-layer.app {
+            background: rgba(0, 212, 170, 0.06);
+            border-color: rgba(0, 212, 170, 0.15);
+        }
+
+        .stack-layer.app:hover {
+            border-color: rgba(0, 212, 170, 0.4);
+            background: rgba(0, 212, 170, 0.1);
+        }
+
+        .stack-layer.proto {
+            background: rgba(79, 142, 247, 0.06);
+            border-color: rgba(79, 142, 247, 0.15);
+        }
+
+        .stack-layer.proto:hover {
+            border-color: rgba(79, 142, 247, 0.4);
+        }
+
+        .stack-layer.dev {
+            background: rgba(247, 147, 79, 0.06);
+            border-color: rgba(247, 147, 79, 0.15);
+        }
+
+        .stack-layer.dev:hover {
+            border-color: rgba(247, 147, 79, 0.4);
+        }
+
+        .stack-layer.chan {
+            background: rgba(192, 132, 252, 0.06);
+            border-color: rgba(192, 132, 252, 0.15);
+        }
+
+        .stack-layer.chan:hover {
+            border-color: rgba(192, 132, 252, 0.4);
+        }
+
+        .stack-layer.node-l {
+            background: rgba(248, 113, 113, 0.06);
+            border-color: rgba(248, 113, 113, 0.15);
+        }
+
+        .stack-layer.node-l:hover {
+            border-color: rgba(248, 113, 113, 0.4);
+        }
+
+        .layer-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .layer-info {
+            flex: 1;
+        }
+
+        .layer-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .layer-desc {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .layer-tag {
+            font-family: var(--mono);
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .stack-detail {
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height .35s ease;
+        }
+
+        .stack-detail.open {
+            max-height: 200px;
+        }
+
+        .stack-detail-inner {
+            padding: 14px 20px 14px 72px;
+            font-size: 13px;
+            color: var(--muted);
+            border-top: 1px solid var(--border);
+            line-height: 1.8;
+        }
+
+        .stack-detail-inner code {
+            font-family: var(--mono);
+            font-size: 11px;
+            background: var(--bg3);
+            padding: 1px 6px;
+            border-radius: 4px;
+            color: var(--text);
+        }
+
+        /* ── CODE BLOCKS ── */
+        pre {
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px 22px;
+            overflow-x: auto;
+            font-family: var(--mono);
+            font-size: 12px;
+            line-height: 1.9;
+            margin: 16px 0;
+        }
+
+        .cm {
+            color: #4a5568;
+        }
+
+        .ck {
+            color: #818cf8;
+        }
+
+        .cs {
+            color: var(--accent);
+        }
+
+        .cn {
+            color: var(--accent3);
+        }
+
+        .cf {
+            color: var(--accent4);
+        }
+
+        /* ── STEPPER ── */
+        .stepper {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .step {
+            display: flex;
+            gap: 20px;
+        }
+
+        .step-line {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .step-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg3);
+            border: 2px solid var(--border2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--muted);
+            flex-shrink: 0;
+            transition: all .2s;
+        }
+
+        .step.done .step-dot {
+            background: rgba(0, 212, 170, 0.15);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .step.active .step-dot {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #0a0e1a;
+        }
+
+        .step-connector {
+            width: 1px;
+            flex: 1;
+            background: var(--border2);
+            margin: 6px 0;
+            min-height: 20px;
+        }
+
+        .step-body {
+            padding-bottom: 28px;
+            flex: 1;
+            padding-top: 4px;
+        }
+
+        .step-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .step-text {
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.8;
+        }
+
+        /* ── TOPOLOGY VIZ ── */
+        .topo-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+
+        .topo-tab {
+            padding: 7px 16px;
+            border-radius: 7px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--muted);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all .2s;
+            font-family: var(--sans);
+        }
+
+        .topo-tab.active {
+            background: var(--bg3);
+            color: var(--text);
+            border-color: var(--border2);
+        }
+
+        .topo-svg-wrap {
+            background: var(--bg3);
+            border-radius: 12px;
+            padding: 28px 20px;
+            border: 1px solid var(--border);
+        }
+
+        .topo-panel {
+            display: none;
+        }
+
+        .topo-panel.active {
+            display: block;
+        }
+
+        .topo-desc {
+            margin-top: 16px;
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.8;
+            padding: 14px 18px;
+            background: var(--bg3);
+            border-radius: 8px;
+            border-left: 2px solid var(--accent);
+        }
+
+        /* ── TRACING CARDS ── */
+        .trace-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+        }
+
+        .trace-card {
+            border-radius: 12px;
+            padding: 20px 22px;
+            border: 1px solid;
+        }
+
+        .trace-card.log {
+            background: rgba(0, 212, 170, 0.04);
+            border-color: rgba(0, 212, 170, 0.2);
+        }
+
+        .trace-card.pcap {
+            background: rgba(247, 147, 79, 0.04);
+            border-color: rgba(247, 147, 79, 0.2);
+        }
+
+        .trace-card.ascii {
+            background: rgba(79, 142, 247, 0.04);
+            border-color: rgba(79, 142, 247, 0.2);
+        }
+
+        .trace-card-icon {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        .trace-card h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .trace-card p {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        /* ── LOG LEVELS ── */
+        .log-levels {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .lvl {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 14px;
+            border-radius: 8px;
+            min-width: 80px;
+        }
+
+        .lvl-name {
+            font-family: var(--mono);
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .lvl-desc {
+            font-size: 10px;
+            color: var(--muted);
+            margin-top: 3px;
+            text-align: center;
+        }
+
+        /* ── QUIZ ── */
+        .quiz-q {
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        .quiz-num {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--muted);
+            margin-bottom: 10px;
+        }
+
+        .quiz-opts {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .quiz-opt {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border2);
+            background: var(--bg3);
+            color: var(--text);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all .2s;
+            font-family: var(--sans);
+        }
+
+        .quiz-opt:hover:not(:disabled) {
+            border-color: var(--accent2);
+            background: rgba(79, 142, 247, 0.08);
+        }
+
+        .quiz-opt.correct {
+            background: rgba(52, 211, 153, 0.1);
+            border-color: var(--green);
+            color: var(--green);
+        }
+
+        .quiz-opt.wrong {
+            background: rgba(248, 113, 113, 0.1);
+            border-color: var(--red);
+            color: var(--red);
+        }
+
+        .quiz-feedback {
+            margin-top: 14px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .quiz-feedback.good {
+            background: rgba(52, 211, 153, 0.08);
+            border: 1px solid rgba(52, 211, 153, 0.25);
+            color: var(--green);
+        }
+
+        .quiz-feedback.bad {
+            background: rgba(248, 113, 113, 0.08);
+            border: 1px solid rgba(248, 113, 113, 0.25);
+            color: var(--red);
+        }
+
+        .quiz-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 18px;
+        }
+
+        .quiz-dots {
+            display: flex;
+            gap: 5px;
+        }
+
+        .qdot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--border2);
+            transition: all .2s;
+        }
+
+        .qdot.done {
+            background: var(--accent);
+        }
+
+        .qdot.current {
+            background: var(--accent2);
+        }
+
+        /* ── CHEATSHEET ── */
+        .cheat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 14px;
+        }
+
+        .cheat-item {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px 18px;
+        }
+
+        .cheat-label {
+            font-family: var(--mono);
+            font-size: 10px;
+            color: var(--accent);
+            margin-bottom: 6px;
+            letter-spacing: .08em;
+        }
+
+        .cheat-name {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .cheat-desc {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .cheat-code {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--accent3);
+            background: var(--bg3);
+            border-radius: 5px;
+            padding: 2px 7px;
+            display: inline-block;
+            margin-top: 6px;
+        }
+
+        /* ── RESOURCES ── */
+        .resource-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .resource-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 18px;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--text);
+            transition: all .2s;
+        }
+
+        .resource-item:hover {
+            border-color: var(--border2);
+            background: var(--bg3);
+        }
+
+        .resource-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            background: var(--bg3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .resource-name {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .resource-url {
+            font-family: var(--mono);
+            font-size: 10px;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .resource-arrow {
+            margin-left: auto;
+            color: var(--muted);
+            font-size: 16px;
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 40px 2rem;
+            text-align: center;
+            color: var(--muted);
+            font-size: 12px;
+            font-family: var(--mono);
+        }
+
+        /* ── UTIL ── */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+        }
+
+        .tag {
+            display: inline-block;
+            font-family: var(--mono);
+            font-size: 10px;
+            padding: 3px 9px;
+            border-radius: 5px;
+            margin: 2px;
+        }
+
+        .tag-green {
+            background: rgba(52, 211, 153, 0.1);
+            color: var(--green);
+        }
+
+        .tag-blue {
+            background: rgba(79, 142, 247, 0.1);
+            color: var(--accent2);
+        }
+
+        .tag-amber {
+            background: rgba(251, 191, 36, 0.1);
+            color: var(--yellow);
+        }
+
+        .tag-purple {
+            background: rgba(192, 132, 252, 0.1);
+            color: var(--accent4);
+        }
+
+        .tag-red {
+            background: rgba(248, 113, 113, 0.1);
+            color: var(--red);
+        }
+
+        .tag-teal {
+            background: rgba(0, 212, 170, 0.1);
+            color: var(--accent);
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 20px 0;
+        }
+
+        .mono {
+            font-family: var(--mono);
+        }
+
+        .accent {
+            color: var(--accent);
+        }
+
+        .text-muted {
+            color: var(--muted);
+        }
+
+        @media (max-width: 680px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .grid-3 {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .hero-stats {
+                gap: 24px;
+            }
+
+            nav .nav-link:not(.nav-logo) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAV -->
+    <nav>
+        <div class="nav-logo">ns<span>-3</span> / guide</div>
+        <button class="nav-link" onclick="scrollTo('what')">What is ns-3</button>
+        <button class="nav-link" onclick="scrollTo('arch')">Architecture</button>
+        <button class="nav-link" onclick="scrollTo('setup')">Setup</button>
+        <button class="nav-link" onclick="scrollTo('script')">First script</button>
+        <button class="nav-link" onclick="scrollTo('topology')">Topologies</button>
+        <button class="nav-link" onclick="scrollTo('tracing')">Tracing</button>
+        <button class="nav-link" onclick="scrollTo('cheatsheet')">Cheatsheet</button>
+        <button class="nav-link" onclick="scrollTo('quiz')">Quiz</button>
+    </nav>
+
+    <!-- HERO -->
+    <div class="hero" id="top">
+        <div class="hero-grid"></div>
+        <div class="hero-badge">ns-3.47 · Updated Feb 2026</div>
+        <h1>Learn <em>ns-3</em><br>visually & practically</h1>
+        <p class="hero-sub">A visual guide to the ns-3 discrete-event network simulator. From installation to building
+            wireless topologies — with interactive diagrams, annotated code, and quizzes.</p>
+        <div class="hero-ctas">
+            <button class="btn btn-primary" onclick="scrollTo('what')">Start learning →</button>
+            <a class="btn btn-outline" href="https://www.nsnam.org/docs/tutorial/html/" target="_blank">Official docs
+                ↗</a>
+        </div>
+        <div class="hero-stats">
+            <div class="stat">
+                <div class="stat-val">3.47</div>
+                <div class="stat-lbl">Latest release</div>
+            </div>
+            <div class="stat">
+                <div class="stat-val">2006</div>
+                <div class="stat-lbl">Project started</div>
+            </div>
+            <div class="stat">
+                <div class="stat-val">28</div>
+                <div class="stat-lbl">Authors in 3.47</div>
+            </div>
+            <div class="stat">
+                <div class="stat-val">GPLv2</div>
+                <div class="stat-lbl">License</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WHAT IS NS-3 -->
+    <section id="what">
+        <div class="section-eyebrow">Chapter 01</div>
+        <h2 class="section-title">What is ns-3?</h2>
+        <p class="section-sub">ns-3 is a free, open-source, discrete-event network simulator built for Internet research
+            and education. Think of it as a virtual lab where you write C++ (or Python) code to describe a network and
+            run experiments — no physical hardware needed.</p>
+
+        <div class="grid-2" style="margin-bottom: 20px;">
+            <div class="card">
+                <div class="section-eyebrow" style="margin-bottom:10px">Core idea</div>
+                <p style="font-size:13px;color:var(--muted);line-height:1.8">Every network event — a packet being sent,
+                    a queue filling up, a link failing — is a <strong style="color:var(--text)">C++ function
+                        call</strong> scheduled in time. The simulator fires these events in chronological order. No
+                    real time passes; the clock only advances when an event fires.</p>
+                <div style="margin-top:16px;font-size:12px;color:var(--muted)">Key tags:</div>
+                <div style="margin-top:8px">
+                    <span class="tag tag-teal">Discrete-event</span>
+                    <span class="tag tag-blue">Internet systems</span>
+                    <span class="tag tag-green">Open-source</span>
+                    <span class="tag tag-purple">C++ + Python</span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="section-eyebrow" style="margin-bottom:10px">Why use it?</div>
+                <ul style="font-size:13px;color:var(--muted);line-height:2;padding-left:16px">
+                    <li>Study networks that are too expensive or dangerous to build physically</li>
+                    <li>Run experiments in a controlled, reproducible environment</li>
+                    <li>Execute <strong style="color:var(--text)">real implementation code</strong> inside the simulator
+                    </li>
+                    <li>Freely extensible — add your own protocols, devices, models</li>
+                    <li>Actively maintained with regular releases</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card" style="margin-bottom:20px">
+            <div class="section-eyebrow" style="margin-bottom:16px">ns-3 vs ns-2 — what changed?</div>
+            <div style="overflow-x:auto">
+                <table style="width:100%;border-collapse:collapse;font-size:13px">
+                    <thead>
+                        <tr style="border-bottom:1px solid var(--border2)">
+                            <th style="text-align:left;padding:8px 14px;color:var(--muted);font-weight:500">Feature</th>
+                            <th style="text-align:left;padding:8px 14px;color:var(--red);font-weight:500">ns-2</th>
+                            <th style="text-align:left;padding:8px 14px;color:var(--accent);font-weight:500">ns-3 ✓</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom:1px solid var(--border)">
+                            <td style="padding:8px 14px;color:var(--muted)">Scripting</td>
+                            <td style="padding:8px 14px">OTcl + C++</td>
+                            <td style="padding:8px 14px;color:var(--accent)">C++ or Python</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border)">
+                            <td style="padding:8px 14px;color:var(--muted)">Run from C++</td>
+                            <td style="padding:8px 14px">Not possible</td>
+                            <td style="padding:8px 14px;color:var(--accent)">Yes — just a main()</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border)">
+                            <td style="padding:8px 14px;color:var(--muted)">Real code emulation</td>
+                            <td style="padding:8px 14px">No</td>
+                            <td style="padding:8px 14px;color:var(--accent)">Yes</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border)">
+                            <td style="padding:8px 14px;color:var(--muted)">Multiple NICs per node</td>
+                            <td style="padding:8px 14px">Limited/buggy</td>
+                            <td style="padding:8px 14px;color:var(--accent)">Full support</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border)">
+                            <td style="padding:8px 14px;color:var(--muted)">Trace output</td>
+                            <td style="padding:8px 14px">nam animator</td>
+                            <td style="padding:8px 14px;color:var(--accent)">pcap, ASCII, NetAnim, Gnuplot</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:8px 14px;color:var(--muted)">Maintenance</td>
+                            <td style="padding:8px 14px">Lightly maintained</td>
+                            <td style="padding:8px 14px;color:var(--accent)">Active — 3.47 Feb 2026</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card" style="background: rgba(251,191,36,0.04); border-color: rgba(251,191,36,0.2);">
+            <div style="font-family:var(--mono);font-size:11px;color:var(--yellow);margin-bottom:8px">⚡ ns-3.47 NEW (Feb
+                2026)</div>
+            <p style="font-size:13px;color:var(--muted);line-height:1.8">The latest release adds new <strong
+                    style="color:var(--text)">IEEE 802.11ax traffic generators</strong>, support for <strong
+                    style="color:var(--text)">TCP Forward Acknowledgement</strong>, and improvements to <strong
+                    style="color:var(--text)">3GPP propagation models</strong> for outdoor-to-indoor penetration losses.
+                28 authors contributed.</p>
+        </div>
+    </section>
+
+    <!-- ARCHITECTURE -->
+    <section id="arch">
+        <div class="section-eyebrow">Chapter 02</div>
+        <h2 class="section-title">Core abstractions</h2>
+        <p class="section-sub">ns-3 is built around five key abstractions. Everything in a simulation is one of these
+            things, or attached to one of them. Click each layer to expand details.</p>
+
+        <div class="grid-2" style="gap:28px;align-items:start">
+            <div>
+                <div class="stack">
+                    <div class="stack-layer app" onclick="toggleLayer('app')">
+                        <div class="layer-icon" style="background:rgba(0,212,170,0.12)">📦</div>
+                        <div class="layer-info">
+                            <div class="layer-name" style="color:var(--accent)">Application</div>
+                            <div class="layer-desc">Generates or consumes traffic</div>
+                        </div>
+                        <span class="layer-tag" style="background:rgba(0,212,170,0.1);color:var(--accent)">top</span>
+                    </div>
+                    <div class="stack-detail" id="detail-app">
+                        <div class="stack-detail-inner">
+                            Like user programs on a real OS — but there's no actual OS in ns-3. Apps run on Nodes and
+                            drive simulation activity. Built-in examples: <code>UdpEchoClient</code>,
+                            <code>UdpEchoServer</code>, <code>OnOffApplication</code>, <code>BulkSendApplication</code>.
+                            You schedule start/stop times with <code>app.Start(Seconds(2.0))</code>.
+                        </div>
+                    </div>
+                    <div style="display:flex;justify-content:center;padding:2px 0">
+                        <div style="width:1px;height:12px;background:var(--border2)"></div>
+                    </div>
+                    <div class="stack-layer proto" onclick="toggleLayer('proto')">
+                        <div class="layer-icon" style="background:rgba(79,142,247,0.12)">🔗</div>
+                        <div class="layer-info">
+                            <div class="layer-name" style="color:var(--accent2)">Internet stack</div>
+                            <div class="layer-desc">TCP, UDP, IPv4/v6, ARP</div>
+                        </div>
+                        <span class="layer-tag"
+                            style="background:rgba(79,142,247,0.1);color:var(--accent2)">protocols</span>
+                    </div>
+                    <div class="stack-detail" id="detail-proto">
+                        <div class="stack-detail-inner">
+                            The full TCP/IP stack. Install it on nodes with <code>InternetStackHelper</code>. Protocols
+                            talk through the <strong style="color:var(--text)">TrafficControlLayer</strong>, which
+                            enforces queueing discipline before handing packets to the NetDevice. Supports TCP variants:
+                            Reno, NewReno, CUBIC, BBR.
+                        </div>
+                    </div>
+                    <div style="display:flex;justify-content:center;padding:2px 0">
+                        <div style="width:1px;height:12px;background:var(--border2)"></div>
+                    </div>
+                    <div class="stack-layer dev" onclick="toggleLayer('dev')">
+                        <div class="layer-icon" style="background:rgba(247,147,79,0.12)">💻</div>
+                        <div class="layer-info">
+                            <div class="layer-name" style="color:var(--accent3)">NetDevice</div>
+                            <div class="layer-desc">Simulated NIC — driver + hardware</div>
+                        </div>
+                        <span class="layer-tag"
+                            style="background:rgba(247,147,79,0.1);color:var(--accent3)">device</span>
+                    </div>
+                    <div class="stack-detail" id="detail-dev">
+                        <div class="stack-detail-inner">
+                            Models both the software driver and the NIC hardware together. A Node can have multiple
+                            NetDevices (multiple network interfaces). Types: <code>PointToPointNetDevice</code>,
+                            <code>CsmaNetDevice</code>, <code>WifiNetDevice</code>. Each pairs with its matching Channel
+                            type only.
+                        </div>
+                    </div>
+                    <div style="display:flex;justify-content:center;padding:2px 0">
+                        <div style="width:1px;height:12px;background:var(--border2)"></div>
+                    </div>
+                    <div class="stack-layer chan" onclick="toggleLayer('chan')">
+                        <div class="layer-icon" style="background:rgba(192,132,252,0.12)">〰️</div>
+                        <div class="layer-info">
+                            <div class="layer-name" style="color:var(--accent4)">Channel</div>
+                            <div class="layer-desc">The medium — wire, wifi spectrum</div>
+                        </div>
+                        <span class="layer-tag"
+                            style="background:rgba(192,132,252,0.1);color:var(--accent4)">medium</span>
+                    </div>
+                    <div class="stack-detail" id="detail-chan">
+                        <div class="stack-detail-inner">
+                            The medium packets propagate through. <code>PointToPointChannel</code> connects exactly 2
+                            devices, models a dedicated cable with configurable delay. <code>CsmaChannel</code> is a
+                            shared bus (like classic Ethernet). <code>WifiChannel</code> uses the
+                            <code>YansWifiChannel</code> propagation model.
+                        </div>
+                    </div>
+                    <div style="display:flex;justify-content:center;padding:2px 0">
+                        <div style="width:1px;height:12px;background:var(--border2)"></div>
+                    </div>
+                    <div class="stack-layer node-l" onclick="toggleLayer('node')">
+                        <div class="layer-icon" style="background:rgba(248,113,113,0.12)">⬡</div>
+                        <div class="layer-info">
+                            <div class="layer-name" style="color:var(--red)">Node</div>
+                            <div class="layer-desc">The simulation host — like a computer</div>
+                        </div>
+                        <span class="layer-tag" style="background:rgba(248,113,113,0.1);color:var(--red)">base</span>
+                    </div>
+                    <div class="stack-detail" id="detail-node">
+                        <div class="stack-detail-inner">
+                            The fundamental unit. A Node holds NetDevices, protocol stacks, and Applications. Think of
+                            it as a graph node (from Graph Theory) — not a "host" (to avoid Internet-specific
+                            connotations). Created with <code>NodeContainer nodes; nodes.Create(2);</code>. Everything
+                            is attached to a Node or to something on a Node.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="card" style="margin-bottom:16px">
+                    <div class="section-eyebrow" style="margin-bottom:12px">Packet flow through layers</div>
+                    <svg width="100%" viewBox="0 0 320 260" style="display:block">
+                        <defs>
+                            <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5"
+                                orient="auto-start-reverse">
+                                <path d="M2 1L8 5L2 9" fill="none" stroke="#4a5568" stroke-width="1.5"
+                                    stroke-linecap="round" />
+                            </marker>
+                        </defs>
+                        <!-- Node A -->
+                        <rect x="10" y="10" width="130" height="240" rx="10" fill="rgba(248,113,113,0.05)"
+                            stroke="rgba(248,113,113,0.2)" stroke-width="1" />
+                        <text x="75" y="28" text-anchor="middle" font-family="Space Mono" font-size="9"
+                            fill="#f87171">NODE A</text>
+                        <!-- App box -->
+                        <rect x="20" y="36" width="110" height="30" rx="6" fill="rgba(0,212,170,0.1)"
+                            stroke="rgba(0,212,170,0.3)" stroke-width="0.5" />
+                        <text x="75" y="55" text-anchor="middle" font-family="Space Mono" font-size="9"
+                            fill="#00d4aa">Application</text>
+                        <!-- Proto box -->
+                        <rect x="20" y="86" width="110" height="30" rx="6" fill="rgba(79,142,247,0.1)"
+                            stroke="rgba(79,142,247,0.3)" stroke-width="0.5" />
+                        <text x="75" y="105" text-anchor="middle" font-family="Space Mono" font-size="9"
+                            fill="#4f8ef7">TCP/UDP/IP</text>
+                        <!-- Device box -->
+                        <rect x="20" y="136" width="110" height="30" rx="6" fill="rgba(247,147,79,0.1)"
+                            stroke="rgba(247,147,79,0.3)" stroke-width="0.5" />
+                        <text x="75" y="155" text-anchor="middle" font-family="Space Mono" font-size="9"
+                            fill="#f7934f">NetDevice</text>
+                        <!-- Connector down arrows -->
+                        <line x1="75" y1="66" x2="75" y2="84" stroke="#4a5568" stroke-width="0.8"
+                            marker-end="url(#arr)" />
+                        <line x1="75" y1="116" x2="75" y2="134" stroke="#4a5568" stroke-width="0.8"
+                            marker-end="url(#arr)" />
+                        <!-- Channel -->
+                        <rect x="110" y="176" width="100" height="24" rx="5" fill="rgba(192,132,252,0.12)"
+                            stroke="rgba(192,132,252,0.3)" stroke-width="0.5" />
+                        <text x="160" y="192" text-anchor="middle" font-family="Space Mono" font-size="9"
+                            fill="#c084fc">Channel</text>
+                        <line x1="130" y1="166" x2="155" y2="175" stroke="#4a5568" stroke-width="0.8"
+                            marker-end="url(#arr)" />
+                        <!-- Node B -->
+                        <rect x="180" y="10" width="130" height="240" rx="10" fill="rgba(248,113,113,0.05)"
+                            stroke="rgba(248,113,113,0.2)" stroke-width="1" />
+                        <text x="245" y="28" text-anchor="middle" font-family="Space Mono" font-size="9"
+                            fill="#f87171">NODE B</text>
+                        <rect x="190" y="36" width="110" height="30" rx="6" fill="rgba(0,212,170,0.1)"
+                            stroke="rgba(0,212,170,0.3)" stroke-width="0.5" />
+                        <text x="245" y="55" text-anchor="middle" font-family="Space Mono" font-size="9"
+                            fill="#00d4aa">Application</text>
+                        <rect x="190" y="86" width="110" height="30" rx="6" fill="rgba(79,142,247,0.1)"
+                            stroke="rgba(79,142,247,0.3)" stroke-width="0.5" />
+                        <text x="245" y="105" text-anchor="middle" font-family="Space Mono" font-size="9"
+                            fill="#4f8ef7">TCP/UDP/IP</text>
+                        <rect x="190" y="136" width="110" height="30" rx="6" fill="rgba(247,147,79,0.1)"
+                            stroke="rgba(247,147,79,0.3)" stroke-width="0.5" />
+                        <text x="245" y="155" text-anchor="middle" font-family="Space Mono" font-size="9"
+                            fill="#f7934f">NetDevice</text>
+                        <line x1="245" y1="66" x2="245" y2="84" stroke="#4a5568" stroke-width="0.8"
+                            marker-end="url(#arr)" />
+                        <line x1="245" y1="116" x2="245" y2="134" stroke="#4a5568" stroke-width="0.8"
+                            marker-end="url(#arr)" />
+                        <line x1="210" y1="175" x2="190" y2="166" stroke="#4a5568" stroke-width="0.8"
+                            marker-end="url(#arr)" />
+                        <!-- Send label -->
+                        <text x="160" y="218" text-anchor="middle" font-family="DM Sans" font-size="10"
+                            fill="#7a8499">Packet travels down left stack,</text>
+                        <text x="160" y="232" text-anchor="middle" font-family="DM Sans" font-size="10"
+                            fill="#7a8499">across channel, up right stack</text>
+                    </svg>
+                </div>
+
+                <div class="card">
+                    <div class="section-eyebrow" style="margin-bottom:12px">Attribute system</div>
+                    <p style="font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:12px">Every ns-3 model
+                        object exposes <strong style="color:var(--text)">typed key-value attributes</strong> you can
+                        read and write. This is how you configure parameters without recompiling.</p>
+                    <pre style="margin:0;font-size:11px"><span class="cm">// Set via helper</span>
+p2p.<span class="cn">SetDeviceAttribute</span>(<span class="cs">"DataRate"</span>, <span class="cf">StringValue</span>(<span class="cs">"5Mbps"</span>));
+
+<span class="cm">// Set via global config path</span>
+<span class="cf">Config::Set</span>(<span class="cs">"/NodeList/0/DeviceList/0/TxQueue/MaxSize"</span>,
+            <span class="cf">StringValue</span>(<span class="cs">"25p"</span>));
+
+<span class="cm">// Wildcard — affects ALL nodes</span>
+<span class="cf">Config::Set</span>(<span class="cs">"/NodeList/*/DeviceList/*/TxQueue/MaxSize"</span>,
+            <span class="cf">StringValue</span>(<span class="cs">"15p"</span>));</pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SETUP -->
+    <section id="setup">
+        <div class="section-eyebrow">Chapter 03</div>
+        <h2 class="section-title">Getting started</h2>
+        <p class="section-sub">ns-3 is distributed as source code. You compile it yourself. Here's the complete workflow
+            from zero to running your first simulation.</p>
+
+        <div class="grid-2" style="align-items:start;margin-bottom:28px">
+            <div class="card">
+                <div class="section-eyebrow" style="margin-bottom:14px">Prerequisites</div>
+                <table style="width:100%;font-size:12px;border-collapse:collapse">
+                    <tr style="border-bottom:1px solid var(--border)">
+                        <td style="padding:7px 0;color:var(--muted)">C++ compiler</td>
+                        <td style="padding:7px 0;text-align:right;font-family:var(--mono)"><span
+                                class="tag tag-teal">g++ ≥ 9</span> <span class="tag tag-blue">clang++</span></td>
+                    </tr>
+                    <tr style="border-bottom:1px solid var(--border)">
+                        <td style="padding:7px 0;color:var(--muted)">Python</td>
+                        <td style="padding:7px 0;text-align:right;font-family:var(--mono)"><span class="tag tag-teal">≥
+                                3.8</span></td>
+                    </tr>
+                    <tr style="border-bottom:1px solid var(--border)">
+                        <td style="padding:7px 0;color:var(--muted)">CMake</td>
+                        <td style="padding:7px 0;text-align:right;font-family:var(--mono)"><span class="tag tag-teal">≥
+                                3.13</span></td>
+                    </tr>
+                    <tr style="border-bottom:1px solid var(--border)">
+                        <td style="padding:7px 0;color:var(--muted)">Build system</td>
+                        <td style="padding:7px 0;text-align:right;font-family:var(--mono)"><span
+                                class="tag tag-blue">make / ninja</span></td>
+                    </tr>
+                    <tr>
+                        <td style="padding:7px 0;color:var(--muted)">Platform</td>
+                        <td style="padding:7px 0;text-align:right;font-family:var(--mono)"><span
+                                class="tag tag-teal">Linux</span> <span class="tag tag-blue">macOS</span> <span
+                                class="tag tag-amber">WSL2</span></td>
+                    </tr>
+                </table>
+                <div style="margin-top:14px;font-size:12px;color:var(--muted)">Check versions:</div>
+                <pre style="margin:8px 0;font-size:11px">python --version   <span class="cm"># need 3.8+</span>
+g++ -v             <span class="cm"># need 9+</span>
+cmake --version    <span class="cm"># need 3.13+</span></pre>
+            </div>
+            <div class="card" style="background:rgba(247,147,79,0.04);border-color:rgba(247,147,79,0.2)">
+                <div style="font-family:var(--mono);font-size:11px;color:var(--accent3);margin-bottom:10px">⚠ Windows
+                    users</div>
+                <p style="font-size:13px;color:var(--muted);line-height:1.8">Native Windows Visual Studio is not
+                    currently supported. Use one of these instead:</p>
+                <ul style="font-size:13px;color:var(--muted);line-height:2;padding-left:16px;margin-top:8px">
+                    <li><strong style="color:var(--text)">WSL2</strong> with Ubuntu — recommended, full support</li>
+                    <li><strong style="color:var(--text)">Docker</strong> container with Ubuntu image</li>
+                    <li><strong style="color:var(--text)">Msys2</strong> + MinGW64 — supported since ns-3.37</li>
+                    <li>Linux virtual machine</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card" style="margin-bottom:28px">
+            <div class="section-eyebrow" style="margin-bottom:20px">Complete installation walkthrough</div>
+            <div class="stepper">
+                <div class="step done">
+                    <div class="step-line">
+                        <div class="step-dot">1</div>
+                        <div class="step-connector"></div>
+                    </div>
+                    <div class="step-body">
+                        <div class="step-title">Download ns-3</div>
+                        <div class="step-text">Two options — tarball release (simpler) or Git clone (gets latest dev):
+                        </div>
+                        <pre><span class="cm"># Option A — tarball (recommended for beginners)</span>
+mkdir workspace && cd workspace
+wget https://www.nsnam.org/release/ns-3.45.tar.bz2
+tar xjf ns-3.45.tar.bz2
+cd ns-3.45
+
+<span class="cm"># Option B — Git (gets development tree)</span>
+git clone https://gitlab.com/nsnam/ns-3-dev.git
+cd ns-3-dev</pre>
+                    </div>
+                </div>
+                <div class="step done">
+                    <div class="step-line">
+                        <div class="step-dot">2</div>
+                        <div class="step-connector"></div>
+                    </div>
+                    <div class="step-body">
+                        <div class="step-title">Configure the build</div>
+                        <div class="step-text">ns-3 wraps CMake with a Python script called <code class="mono"
+                                style="font-size:11px;background:var(--bg3);padding:1px 6px;border-radius:4px">./ns3</code>.
+                            The two most common build profiles are <strong style="color:var(--text)">debug</strong>
+                            (with assertions, slower) and <strong style="color:var(--text)">optimized</strong> (faster,
+                            for big simulations):</div>
+                        <pre><span class="cm"># Optimized build with examples + tests enabled</span>
+./ns3 configure --build-profile=optimized \
+                --enable-examples --enable-tests
+
+<span class="cm"># Debug build (default, good for development)</span>
+./ns3 configure --enable-examples --enable-tests</pre>
+                    </div>
+                </div>
+                <div class="step done">
+                    <div class="step-line">
+                        <div class="step-dot">3</div>
+                        <div class="step-connector"></div>
+                    </div>
+                    <div class="step-body">
+                        <div class="step-title">Compile</div>
+                        <div class="step-text">This compiles all ns-3 libraries into the <code class="mono"
+                                style="font-size:11px;background:var(--bg3);padding:1px 6px;border-radius:4px">build/</code>
+                            directory. First compile takes several minutes.</div>
+                        <pre>./ns3 build
+<span class="cm"># Libraries appear in build/lib/</span></pre>
+                    </div>
+                </div>
+                <div class="step done">
+                    <div class="step-line">
+                        <div class="step-dot">4</div>
+                        <div class="step-connector"></div>
+                    </div>
+                    <div class="step-body">
+                        <div class="step-title">Run the test suite</div>
+                        <div class="step-text">Verify your build is correct. All tests should <strong
+                                style="color:var(--green)">PASS</strong> or be <strong
+                                style="color:var(--yellow)">SKIPped</strong>.</div>
+                        <pre>./test.py
+<span class="cm"># PASS: 1200+ unit tests</span>
+<span class="cm"># Takes ~5-10 minutes</span></pre>
+                    </div>
+                </div>
+                <div class="step active">
+                    <div class="step-line">
+                        <div class="step-dot">5</div>
+                    </div>
+                    <div class="step-body">
+                        <div class="step-title">Run your first program</div>
+                        <div class="step-text">Execute the canonical <code class="mono"
+                                style="font-size:11px;background:var(--bg3);padding:1px 6px;border-radius:4px">first.cc</code>
+                            example. The ns3 wrapper automatically adds shared library paths so ns-3 libraries are
+                            found.</div>
+                        <pre>./ns3 run first
+<span class="cm"># Output:</span>
+<span class="cs">Sent 1024 bytes to 10.1.1.2</span>
+<span class="cs">Received 1024 bytes from 10.1.1.1</span>
+
+<span class="cm"># View all command-line options</span>
+./ns3 run 'first --PrintHelp'</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="background:rgba(0,212,170,0.04);border-color:rgba(0,212,170,0.2)">
+            <div style="font-family:var(--mono);font-size:11px;color:var(--accent);margin-bottom:10px">💡 Directory
+                structure</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;font-size:12px">
+                <div><code class="mono" style="color:var(--accent)">src/</code>
+                    <div style="color:var(--muted);margin-top:3px">ns-3 module source code</div>
+                </div>
+                <div><code class="mono" style="color:var(--accent)">scratch/</code>
+                    <div style="color:var(--muted);margin-top:3px">Your own simulation scripts</div>
+                </div>
+                <div><code class="mono" style="color:var(--accent)">examples/</code>
+                    <div style="color:var(--muted);margin-top:3px">Official example programs</div>
+                </div>
+                <div><code class="mono" style="color:var(--accent)">build/</code>
+                    <div style="color:var(--muted);margin-top:3px">Compiled libraries & binaries</div>
+                </div>
+                <div><code class="mono" style="color:var(--accent)">contrib/</code>
+                    <div style="color:var(--muted);margin-top:3px">Contributed third-party modules</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FIRST SCRIPT -->
+    <section id="script">
+        <div class="section-eyebrow">Chapter 04</div>
+        <h2 class="section-title">Your first ns-3 script</h2>
+        <p class="section-sub">The canonical example <code class="mono"
+                style="font-size:12px">examples/tutorial/first.cc</code> creates two nodes connected by a point-to-point
+            link, sends a UDP packet from node 0 to node 1, and prints the result. Here's what every line does.</p>
+
+        <div class="card" style="margin-bottom:20px">
+            <div class="section-eyebrow" style="margin-bottom:16px">What the simulation does (visual)</div>
+            <svg width="100%" viewBox="0 0 660 180" style="display:block">
+                <defs>
+                    <marker id="a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5"
+                        orient="auto-start-reverse">
+                        <path d="M2 1L8 5L2 9" fill="none" stroke="#00d4aa" stroke-width="1.5" stroke-linecap="round" />
+                    </marker>
+                    <marker id="a3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5"
+                        orient="auto-start-reverse">
+                        <path d="M2 1L8 5L2 9" fill="none" stroke="#4f8ef7" stroke-width="1.5" stroke-linecap="round" />
+                    </marker>
+                </defs>
+                <!-- Node 0 -->
+                <circle cx="120" cy="80" r="44" fill="rgba(0,212,170,0.06)" stroke="rgba(0,212,170,0.3)"
+                    stroke-width="1" />
+                <text x="120" y="75" text-anchor="middle" font-family="Space Mono" font-size="11" fill="#00d4aa"
+                    font-weight="700">Node 0</text>
+                <text x="120" y="91" text-anchor="middle" font-family="DM Sans" font-size="10"
+                    fill="#7a8499">UdpEchoClient</text>
+                <text x="120" y="105" text-anchor="middle" font-family="Space Mono" font-size="9"
+                    fill="#7a8499">10.1.1.1</text>
+                <!-- Link -->
+                <rect x="174" y="70" width="312" height="20" rx="5" fill="rgba(247,147,79,0.08)"
+                    stroke="rgba(247,147,79,0.3)" stroke-width="0.5" />
+                <text x="330" y="83" text-anchor="middle" font-family="Space Mono" font-size="9"
+                    fill="#f7934f">PointToPoint · 5Mbps · 2ms delay</text>
+                <!-- Node 1 -->
+                <circle cx="540" cy="80" r="44" fill="rgba(79,142,247,0.06)" stroke="rgba(79,142,247,0.3)"
+                    stroke-width="1" />
+                <text x="540" y="75" text-anchor="middle" font-family="Space Mono" font-size="11" fill="#4f8ef7"
+                    font-weight="700">Node 1</text>
+                <text x="540" y="91" text-anchor="middle" font-family="DM Sans" font-size="10"
+                    fill="#7a8499">UdpEchoServer</text>
+                <text x="540" y="105" text-anchor="middle" font-family="Space Mono" font-size="9"
+                    fill="#7a8499">10.1.1.2 :9</text>
+                <!-- Arrows -->
+                <path d="M164 68 L174 70" stroke="none" />
+                <line x1="174" y1="72" x2="162" y2="72" stroke="#00d4aa" stroke-width="1.5" stroke-dasharray="4 3"
+                    marker-end="url(#a2)" />
+                <text x="140" y="64" font-family="DM Sans" font-size="10" fill="#00d4aa">Send t=2s</text>
+                <line x1="486" y1="88" x2="498" y2="88" stroke="#4f8ef7" stroke-width="1.5" stroke-dasharray="4 3"
+                    marker-end="url(#a3)" />
+                <text x="490" y="105" font-family="DM Sans" font-size="10" fill="#4f8ef7">Echo back</text>
+                <!-- Timeline -->
+                <line x1="60" y1="150" x2="610" y2="150" stroke="rgba(255,255,255,0.12)" stroke-width="0.8" />
+                <text x="60" y="166" font-family="Space Mono" font-size="9" fill="#4a5568">t=0s</text>
+                <line x1="200" y1="145" x2="200" y2="155" stroke="rgba(255,255,255,0.1)" />
+                <text x="200" y="166" font-family="Space Mono" font-size="9" fill="#00d4aa" text-anchor="middle">t=1s
+                    server up</text>
+                <line x1="350" y1="145" x2="350" y2="155" stroke="rgba(255,255,255,0.1)" />
+                <text x="350" y="166" font-family="Space Mono" font-size="9" fill="#00d4aa" text-anchor="middle">t=2s
+                    send</text>
+                <line x1="460" y1="145" x2="460" y2="155" stroke="rgba(255,255,255,0.1)" />
+                <text x="460" y="166" font-family="Space Mono" font-size="9" fill="#4f8ef7"
+                    text-anchor="middle">t=2.002s rx</text>
+                <line x1="580" y1="145" x2="580" y2="155" stroke="rgba(255,255,255,0.1)" />
+                <text x="580" y="166" font-family="Space Mono" font-size="9" fill="#7a8499" text-anchor="middle">t=10s
+                    stop</text>
+            </svg>
+        </div>
+
+        <div class="card">
+            <div class="section-eyebrow" style="margin-bottom:16px">Annotated first.cc — full breakdown</div>
+
+            <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:var(--accent)">① Includes & logging setup
+            </div>
+            <pre><span class="cm">// ns-3 modules group related classes — include what you need</span>
+#include <span class="cs">"ns3/core-module.h"</span>       <span class="cm">// Simulator, Time, logging</span>
+#include <span class="cs">"ns3/network-module.h"</span>    <span class="cm">// Node, Packet, NetDevice</span>
+#include <span class="cs">"ns3/internet-module.h"</span>   <span class="cm">// TCP/IP stack</span>
+#include <span class="cs">"ns3/point-to-point-module.h"</span>
+#include <span class="cs">"ns3/applications-module.h"</span>
+
+<span class="ck">using namespace</span> ns3;
+<span class="cm">// Declare a logging component for this file</span>
+<span class="cf">NS_LOG_COMPONENT_DEFINE</span> (<span class="cs">"FirstScriptExample"</span>);</pre>
+
+            <div style="font-size:13px;font-weight:600;margin:20px 0 8px;color:var(--accent)">② Create nodes</div>
+            <pre><span class="cm">// NodeContainer groups Node objects</span>
+NodeContainer nodes;
+nodes.<span class="cn">Create</span> (2);  <span class="cm">// Creates node 0 (client) and node 1 (server)</span></pre>
+
+            <div style="font-size:13px;font-weight:600;margin:20px 0 8px;color:var(--accent)">③ Configure the link</div>
+            <pre>PointToPointHelper pointToPoint;
+pointToPoint.<span class="cn">SetDeviceAttribute</span>  (<span class="cs">"DataRate"</span>, <span class="cf">StringValue</span> (<span class="cs">"5Mbps"</span>));
+pointToPoint.<span class="cn">SetChannelAttribute</span> (<span class="cs">"Delay"</span>,    <span class="cf">StringValue</span> (<span class="cs">"2ms"</span>));
+
+NetDeviceContainer devices;
+devices = pointToPoint.<span class="cn">Install</span> (nodes);
+<span class="cm">// This creates 2 NetDevices + 1 Channel, wires them together</span></pre>
+
+            <div style="font-size:13px;font-weight:600;margin:20px 0 8px;color:var(--accent)">④ Install TCP/IP stack &
+                assign addresses</div>
+            <pre>InternetStackHelper stack;
+stack.<span class="cn">Install</span> (nodes);  <span class="cm">// Installs IPv4, TCP, UDP, ARP on both nodes</span>
+
+Ipv4AddressHelper address;
+address.<span class="cn">SetBase</span> (<span class="cs">"10.1.1.0"</span>, <span class="cs">"255.255.255.0"</span>);
+Ipv4InterfaceContainer interfaces = address.<span class="cn">Assign</span> (devices);
+<span class="cm">// Node 0: 10.1.1.1   Node 1: 10.1.1.2</span></pre>
+
+            <div style="font-size:13px;font-weight:600;margin:20px 0 8px;color:var(--accent)">⑤ Install applications
+            </div>
+            <pre><span class="cm">// Server on node 1, listening on UDP port 9</span>
+UdpEchoServerHelper echoServer (9);
+ApplicationContainer serverApps = echoServer.<span class="cn">Install</span> (nodes.<span class="cn">Get</span> (1));
+serverApps.<span class="cn">Start</span> (<span class="cf">Seconds</span> (1.0));
+serverApps.<span class="cn">Stop</span>  (<span class="cf">Seconds</span> (10.0));
+
+<span class="cm">// Client on node 0 — sends to node 1's IP on port 9</span>
+UdpEchoClientHelper echoClient (interfaces.<span class="cn">GetAddress</span> (1), 9);
+echoClient.<span class="cn">SetAttribute</span> (<span class="cs">"MaxPackets"</span>, <span class="cf">UintegerValue</span> (1));
+echoClient.<span class="cn">SetAttribute</span> (<span class="cs">"PacketSize"</span>, <span class="cf">UintegerValue</span> (1024));
+ApplicationContainer clientApps = echoClient.<span class="cn">Install</span> (nodes.<span class="cn">Get</span> (0));
+clientApps.<span class="cn">Start</span> (<span class="cf">Seconds</span> (2.0));
+clientApps.<span class="cn">Stop</span>  (<span class="cf">Seconds</span> (10.0));</pre>
+
+            <div style="font-size:13px;font-weight:600;margin:20px 0 8px;color:var(--accent)">⑥ Run the simulation</div>
+            <pre><span class="cf">Simulator::Run</span> ();      <span class="cm">// Starts the event loop, fires all scheduled events</span>
+<span class="cf">Simulator::Destroy</span> ();  <span class="cm">// Releases memory</span>
+<span class="ck">return</span> 0;</pre>
+        </div>
+    </section>
+
+    <!-- TOPOLOGIES -->
+    <section id="topology">
+        <div class="section-eyebrow">Chapter 05</div>
+        <h2 class="section-title">Building topologies</h2>
+        <p class="section-sub">ns-3 supports three main link types. Helper classes abstract away the dozens of low-level
+            operations needed to configure each one.</p>
+
+        <div class="topo-tabs">
+            <button class="topo-tab active" onclick="showTopo('p2p', this)">Point-to-point</button>
+            <button class="topo-tab" onclick="showTopo('csma', this)">CSMA bus</button>
+            <button class="topo-tab" onclick="showTopo('wifi', this)">WiFi</button>
+        </div>
+
+        <!-- P2P -->
+        <div class="topo-panel active" id="topo-p2p">
+            <div class="topo-svg-wrap">
+                <svg width="100%" viewBox="0 0 620 140" style="display:block">
+                    <defs>
+                        <marker id="tp2p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5"
+                            orient="auto-start-reverse">
+                            <path d="M2 1L8 5L2 9" fill="none" stroke="#00d4aa" stroke-width="1.5"
+                                stroke-linecap="round" />
+                        </marker>
+                    </defs>
+                    <circle cx="150" cy="70" r="46" fill="rgba(0,212,170,0.07)" stroke="rgba(0,212,170,0.3)"
+                        stroke-width="1" />
+                    <text x="150" y="66" text-anchor="middle" font-family="Space Mono" font-size="12" fill="#00d4aa"
+                        font-weight="700">Node 0</text>
+                    <text x="150" y="83" text-anchor="middle" font-family="DM Sans" font-size="10"
+                        fill="#7a8499">10.1.1.1</text>
+                    <rect x="206" y="60" width="208" height="20" rx="5" fill="rgba(247,147,79,0.1)"
+                        stroke="rgba(247,147,79,0.3)" stroke-width="0.5" />
+                    <text x="310" y="73" text-anchor="middle" font-family="Space Mono" font-size="9"
+                        fill="#f7934f">5Mbps / 2ms delay</text>
+                    <line x1="196" y1="64" x2="206" y2="64" stroke="#00d4aa" stroke-width="1.5" marker-end="url(#tp2p)"
+                        stroke-dasharray="3 2" />
+                    <line x1="414" y1="76" x2="424" y2="76" stroke="#00d4aa" stroke-width="1.5" marker-end="url(#tp2p)"
+                        stroke-dasharray="3 2" />
+                    <circle cx="470" cy="70" r="46" fill="rgba(79,142,247,0.07)" stroke="rgba(79,142,247,0.3)"
+                        stroke-width="1" />
+                    <text x="470" y="66" text-anchor="middle" font-family="Space Mono" font-size="12" fill="#4f8ef7"
+                        font-weight="700">Node 1</text>
+                    <text x="470" y="83" text-anchor="middle" font-family="DM Sans" font-size="10"
+                        fill="#7a8499">10.1.1.2</text>
+                    <text x="310" y="120" text-anchor="middle" font-family="DM Sans" font-size="11"
+                        fill="#4a5568">Exactly 2 endpoints · dedicated link · no contention</text>
+                </svg>
+            </div>
+            <div class="topo-desc">Point-to-point connects exactly two nodes with a dedicated link. It's the simplest
+                topology and the one used in <code class="mono" style="font-size:11px">first.cc</code>. Configure with
+                <code class="mono" style="font-size:11px">PointToPointHelper</code> — set DataRate on the NetDevice and
+                Delay on the Channel.</div>
+            <pre style="margin-top:14px"><span class="cm">// Point-to-point setup</span>
+PointToPointHelper p2p;
+p2p.<span class="cn">SetDeviceAttribute</span>  (<span class="cs">"DataRate"</span>, <span class="cf">StringValue</span>(<span class="cs">"5Mbps"</span>));
+p2p.<span class="cn">SetChannelAttribute</span> (<span class="cs">"Delay"</span>,    <span class="cf">StringValue</span>(<span class="cs">"2ms"</span>));
+NetDeviceContainer devs = p2p.<span class="cn">Install</span>(nodes);</pre>
+        </div>
+
+        <!-- CSMA -->
+        <div class="topo-panel" id="topo-csma">
+            <div class="topo-svg-wrap">
+                <svg width="100%" viewBox="0 0 620 160" style="display:block">
+                    <rect x="30" y="90" width="560" height="12" rx="5" fill="rgba(247,147,79,0.12)"
+                        stroke="rgba(247,147,79,0.3)" stroke-width="0.5" />
+                    <text x="310" y="120" text-anchor="middle" font-family="Space Mono" font-size="9"
+                        fill="#f7934f">CSMA shared bus · 100Mbps</text>
+                    <text x="310" y="148" text-anchor="middle" font-family="DM Sans" font-size="11" fill="#4a5568">All
+                        nodes share one channel — CSMA/CD contention</text>
+                    <circle cx="80" cy="56" r="28" fill="rgba(0,212,170,0.08)" stroke="rgba(0,212,170,0.3)"
+                        stroke-width="0.5" />
+                    <text x="80" y="56" text-anchor="middle" dominant-baseline="central" font-family="Space Mono"
+                        font-size="10" fill="#00d4aa">N0</text>
+                    <line x1="80" y1="84" x2="80" y2="90" stroke="rgba(255,255,255,0.15)" stroke-width="1" />
+                    <circle cx="200" cy="56" r="28" fill="rgba(79,142,247,0.08)" stroke="rgba(79,142,247,0.3)"
+                        stroke-width="0.5" />
+                    <text x="200" y="56" text-anchor="middle" dominant-baseline="central" font-family="Space Mono"
+                        font-size="10" fill="#4f8ef7">N1</text>
+                    <line x1="200" y1="84" x2="200" y2="90" stroke="rgba(255,255,255,0.15)" stroke-width="1" />
+                    <circle cx="320" cy="56" r="28" fill="rgba(247,147,79,0.08)" stroke="rgba(247,147,79,0.3)"
+                        stroke-width="0.5" />
+                    <text x="320" y="56" text-anchor="middle" dominant-baseline="central" font-family="Space Mono"
+                        font-size="10" fill="#f7934f">N2</text>
+                    <line x1="320" y1="84" x2="320" y2="90" stroke="rgba(255,255,255,0.15)" stroke-width="1" />
+                    <circle cx="440" cy="56" r="28" fill="rgba(192,132,252,0.08)" stroke="rgba(192,132,252,0.3)"
+                        stroke-width="0.5" />
+                    <text x="440" y="56" text-anchor="middle" dominant-baseline="central" font-family="Space Mono"
+                        font-size="10" fill="#c084fc">N3</text>
+                    <line x1="440" y1="84" x2="440" y2="90" stroke="rgba(255,255,255,0.15)" stroke-width="1" />
+                    <circle cx="560" cy="56" r="28" fill="rgba(248,113,113,0.08)" stroke="rgba(248,113,113,0.3)"
+                        stroke-width="0.5" />
+                    <text x="560" y="56" text-anchor="middle" dominant-baseline="central" font-family="Space Mono"
+                        font-size="10" fill="#f87171">N4</text>
+                    <line x1="560" y1="84" x2="560" y2="90" stroke="rgba(255,255,255,0.15)" stroke-width="1" />
+                </svg>
+            </div>
+            <div class="topo-desc">CSMA (Carrier Sense Multiple Access) models a classic Ethernet bus. All nodes share
+                one channel — only one can transmit at a time; collisions are detected and handled. Used in <code
+                    class="mono" style="font-size:11px">second.cc</code>. Combined with a P2P link to routers in mixed
+                topologies.</div>
+            <pre style="margin-top:14px"><span class="cm">// CSMA bus — many nodes share one channel</span>
+NodeContainer csmaNodes;
+csmaNodes.<span class="cn">Add</span>(p2pNodes.<span class="cn">Get</span>(1));  <span class="cm">// share a node with P2P</span>
+csmaNodes.<span class="cn">Create</span>(3);              <span class="cm">// add 3 more</span>
+
+CsmaHelper csma;
+csma.<span class="cn">SetChannelAttribute</span>(<span class="cs">"DataRate"</span>, <span class="cf">StringValue</span>(<span class="cs">"100Mbps"</span>));
+csma.<span class="cn">SetChannelAttribute</span>(<span class="cs">"Delay"</span>,    <span class="cf">TimeValue</span>(<span class="cf">NanoSeconds</span>(6560)));
+NetDeviceContainer csmaDevs = csma.<span class="cn">Install</span>(csmaNodes);</pre>
+        </div>
+
+        <!-- WIFI -->
+        <div class="topo-panel" id="topo-wifi">
+            <div class="topo-svg-wrap">
+                <svg width="100%" viewBox="0 0 620 180" style="display:block">
+                    <!-- AP -->
+                    <rect x="250" y="20" width="120" height="50" rx="8" fill="rgba(251,191,36,0.08)"
+                        stroke="rgba(251,191,36,0.3)" stroke-width="0.5" />
+                    <text x="310" y="42" text-anchor="middle" font-family="Space Mono" font-size="10" fill="#fbbf24"
+                        font-weight="700">Access Point</text>
+                    <text x="310" y="58" text-anchor="middle" font-family="Space Mono" font-size="9"
+                        fill="#7a8499">192.168.1.1</text>
+                    <!-- Signal rings -->
+                    <ellipse cx="310" cy="70" rx="90" ry="32" fill="none" stroke="#fbbf24" stroke-width="0.5"
+                        stroke-dasharray="4 3" opacity="0.3" />
+                    <ellipse cx="310" cy="70" rx="150" ry="55" fill="none" stroke="#fbbf24" stroke-width="0.5"
+                        stroke-dasharray="4 3" opacity="0.15" />
+                    <!-- Stations -->
+                    <circle cx="80" cy="145" r="26" fill="rgba(0,212,170,0.08)" stroke="rgba(0,212,170,0.3)"
+                        stroke-width="0.5" />
+                    <text x="80" y="145" text-anchor="middle" dominant-baseline="central" font-family="Space Mono"
+                        font-size="10" fill="#00d4aa">STA0</text>
+                    <line x1="106" y1="130" x2="252" y2="67" stroke="rgba(251,191,36,0.25)" stroke-width="0.8"
+                        stroke-dasharray="3 2" />
+                    <circle cx="200" cy="148" r="26" fill="rgba(79,142,247,0.08)" stroke="rgba(79,142,247,0.3)"
+                        stroke-width="0.5" />
+                    <text x="200" y="148" text-anchor="middle" dominant-baseline="central" font-family="Space Mono"
+                        font-size="10" fill="#4f8ef7">STA1</text>
+                    <line x1="226" y1="137" x2="258" y2="70" stroke="rgba(251,191,36,0.25)" stroke-width="0.8"
+                        stroke-dasharray="3 2" />
+                    <circle cx="330" cy="152" r="26" fill="rgba(247,147,79,0.08)" stroke="rgba(247,147,79,0.3)"
+                        stroke-width="0.5" />
+                    <text x="330" y="152" text-anchor="middle" dominant-baseline="central" font-family="Space Mono"
+                        font-size="10" fill="#f7934f">STA2</text>
+                    <line x1="320" y1="126" x2="313" y2="70" stroke="rgba(251,191,36,0.25)" stroke-width="0.8"
+                        stroke-dasharray="3 2" />
+                    <circle cx="450" cy="148" r="26" fill="rgba(192,132,252,0.08)" stroke="rgba(192,132,252,0.3)"
+                        stroke-width="0.5" />
+                    <text x="450" y="148" text-anchor="middle" dominant-baseline="central" font-family="Space Mono"
+                        font-size="10" fill="#c084fc">STA3</text>
+                    <line x1="424" y1="137" x2="362" y2="70" stroke="rgba(251,191,36,0.25)" stroke-width="0.8"
+                        stroke-dasharray="3 2" />
+                    <circle cx="560" cy="145" r="26" fill="rgba(248,113,113,0.08)" stroke="rgba(248,113,113,0.3)"
+                        stroke-width="0.5" />
+                    <text x="560" y="145" text-anchor="middle" dominant-baseline="central" font-family="Space Mono"
+                        font-size="10" fill="#f87171">STA4</text>
+                    <line x1="534" y1="130" x2="368" y2="67" stroke="rgba(251,191,36,0.25)" stroke-width="0.8"
+                        stroke-dasharray="3 2" />
+                    <text x="310" y="175" text-anchor="middle" font-family="DM Sans" font-size="11"
+                        fill="#4a5568">Stations communicate wirelessly through the Access Point</text>
+                </svg>
+            </div>
+            <div class="topo-desc">WiFi topology uses 802.11 protocols. Stations (STA) connect to an Access Point (AP)
+                which bridges to the wired network. Requires <code class="mono"
+                    style="font-size:11px">WifiHelper</code>, <code class="mono"
+                    style="font-size:11px">YansWifiPhyHelper</code> (physical layer), and <code class="mono"
+                    style="font-size:11px">WifiMacHelper</code> (MAC layer). The <code class="mono"
+                    style="font-size:11px">YansWifiChannel</code> models wireless propagation loss.</div>
+            <pre style="margin-top:14px"><span class="cm">// WiFi infrastructure setup</span>
+WifiHelper wifi;
+wifi.<span class="cn">SetStandard</span>(WIFI_STANDARD_80211n);
+
+YansWifiPhyHelper phy;
+YansWifiChannelHelper channel = <span class="cf">YansWifiChannelHelper::Default</span>();
+phy.<span class="cn">SetChannel</span>(channel.<span class="cn">Create</span>());
+
+WifiMacHelper mac;
+<span class="cm">// AP side</span>
+mac.<span class="cn">SetType</span>(<span class="cs">"ns3::ApWifiMac"</span>, <span class="cs">"Ssid"</span>, <span class="cf">SsidValue</span>(ssid));
+NetDeviceContainer apDevs = wifi.<span class="cn">Install</span>(phy, mac, apNode);
+<span class="cm">// Station side</span>
+mac.<span class="cn">SetType</span>(<span class="cs">"ns3::StaWifiMac"</span>, <span class="cs">"Ssid"</span>, <span class="cf">SsidValue</span>(ssid));
+NetDeviceContainer staDevs = wifi.<span class="cn">Install</span>(phy, mac, staNodes);</pre>
+        </div>
+
+        <div class="card" style="margin-top:20px">
+            <div class="section-eyebrow" style="margin-bottom:14px">Topology helper classes</div>
+            <div class="cheat-grid">
+                <div class="cheat-item">
+                    <div class="cheat-label">Groups</div>
+                    <div class="cheat-name">NodeContainer</div>
+                    <div class="cheat-desc">Groups Node objects. Call <code
+                            style="font-family:var(--mono);font-size:11px">.Create(n)</code> to make n nodes, <code
+                            style="font-family:var(--mono);font-size:11px">.Add(node)</code> to include existing ones.
+                    </div>
+                </div>
+                <div class="cheat-item">
+                    <div class="cheat-label">Devices</div>
+                    <div class="cheat-name">NetDeviceContainer</div>
+                    <div class="cheat-desc">Returned by helper <code
+                            style="font-family:var(--mono);font-size:11px">.Install()</code>. Holds pointers to created
+                        NetDevices. Use <code style="font-family:var(--mono);font-size:11px">.Get(i)</code> to get
+                        individual devices.</div>
+                </div>
+                <div class="cheat-item">
+                    <div class="cheat-label">Addresses</div>
+                    <div class="cheat-name">Ipv4AddressHelper</div>
+                    <div class="cheat-desc">Assigns IP addresses from a subnet. Call <code
+                            style="font-family:var(--mono);font-size:11px">.SetBase("10.1.1.0","255.255.255.0")</code>
+                        then <code style="font-family:var(--mono);font-size:11px">.Assign(devs)</code>.</div>
+                </div>
+                <div class="cheat-item">
+                    <div class="cheat-label">Routing</div>
+                    <div class="cheat-name">Ipv4GlobalRoutingHelper</div>
+                    <div class="cheat-desc">Populates routing tables automatically. Call <code
+                            style="font-family:var(--mono);font-size:11px">::PopulateRoutingTables()</code> after
+                        configuring all subnets.</div>
+                </div>
+                <div class="cheat-item">
+                    <div class="cheat-label">Mobility</div>
+                    <div class="cheat-name">MobilityHelper</div>
+                    <div class="cheat-desc">Sets node positions and movement. Required for WiFi. Use <code
+                            style="font-family:var(--mono);font-size:11px">SetPositionAllocator</code> and <code
+                            style="font-family:var(--mono);font-size:11px">SetMobilityModel</code>.</div>
+                </div>
+                <div class="cheat-item">
+                    <div class="cheat-label">Stack</div>
+                    <div class="cheat-name">InternetStackHelper</div>
+                    <div class="cheat-desc">Installs TCP/IP protocol stack on nodes. Must be called before assigning IP
+                        addresses.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TRACING -->
+    <section id="tracing">
+        <div class="section-eyebrow">Chapter 06</div>
+        <h2 class="section-title">Tracing & logging</h2>
+        <p class="section-sub">The whole point of running a simulation is to get data out. ns-3 gives you three
+            complementary output mechanisms — pick based on how much detail you need.</p>
+
+        <div class="trace-grid" style="margin-bottom:24px">
+            <div class="trace-card log">
+                <div class="trace-card-icon">📋</div>
+                <h3 style="color:var(--accent)">Logging module</h3>
+                <p>Console output during simulation. Controlled at runtime via environment variables. 6 severity levels.
+                    Only available in debug builds — not suitable for performance-critical measurements.</p>
+                <pre style="margin-top:12px;background:rgba(0,212,170,0.04);border-color:rgba(0,212,170,0.15)"><span class="cf">NS_LOG_COMPONENT_DEFINE</span>(<span class="cs">"MyComp"</span>);
+<span class="cm">// In code:</span>
+<span class="cf">NS_LOG_INFO</span>(<span class="cs">"Simulation starting"</span>);
+<span class="cm">// At runtime:</span>
+export NS_LOG=MyComp=info
+./ns3 run myscript</pre>
+            </div>
+            <div class="trace-card pcap">
+                <div class="trace-card-icon">🦈</div>
+                <h3 style="color:var(--accent3)">pcap tracing</h3>
+                <p>Captures raw packet data in standard pcap format — the same format used by Wireshark and tcpdump. One
+                    file per node/device pair. Great for detailed packet-level inspection.</p>
+                <pre style="margin-top:12px;background:rgba(247,147,79,0.04);border-color:rgba(247,147,79,0.15)"><span class="cm">// Enable on all devices</span>
+p2p.<span class="cn">EnablePcapAll</span>(<span class="cs">"myfirst"</span>);
+<span class="cm">// Creates: myfirst-0-0.pcap</span>
+<span class="cm">//          myfirst-1-0.pcap</span>
+<span class="cm">// Open with: wireshark myfirst-0-0.pcap</span></pre>
+            </div>
+            <div class="trace-card ascii">
+                <div class="trace-card-icon">📝</div>
+                <h3 style="color:var(--accent2)">ASCII tracing</h3>
+                <p>Human-readable event log written to a text file. Records: packet transmit (<code class="mono"
+                        style="font-size:10px">+</code>), dequeue (<code class="mono" style="font-size:10px">-</code>),
+                    drop (<code class="mono" style="font-size:10px">d</code>), receive (<code class="mono"
+                        style="font-size:10px">r</code>) with timestamps.</p>
+                <pre style="margin-top:12px;background:rgba(79,142,247,0.04);border-color:rgba(79,142,247,0.15)">AsciiTraceHelper ascii;
+p2p.<span class="cn">EnableAsciiAll</span>(
+  ascii.<span class="cn">CreateFileStream</span>(<span class="cs">"myfirst.tr"</span>));
+<span class="cm">// + = enqueue  - = dequeue</span>
+<span class="cm">// r = receive  d = drop</span></pre>
+            </div>
+        </div>
+
+        <div class="card" style="margin-bottom:20px">
+            <div class="section-eyebrow" style="margin-bottom:14px">Log severity levels — least to most verbose</div>
+            <div class="log-levels">
+                <div class="lvl" style="background:rgba(248,113,113,0.1)"><span class="lvl-name"
+                        style="color:var(--red)">ERROR</span><span class="lvl-desc">Fatal errors</span></div>
+                <div class="lvl" style="background:rgba(247,147,79,0.1)"><span class="lvl-name"
+                        style="color:var(--accent3)">WARN</span><span class="lvl-desc">Warnings</span></div>
+                <div class="lvl" style="background:rgba(251,191,36,0.1)"><span class="lvl-name"
+                        style="color:var(--yellow)">DEBUG</span><span class="lvl-desc">Debug info</span></div>
+                <div class="lvl" style="background:rgba(79,142,247,0.1)"><span class="lvl-name"
+                        style="color:var(--accent2)">INFO</span><span class="lvl-desc">General info</span></div>
+                <div class="lvl" style="background:rgba(192,132,252,0.1)"><span class="lvl-name"
+                        style="color:var(--accent4)">FUNCTION</span><span class="lvl-desc">Function entry</span></div>
+                <div class="lvl" style="background:rgba(0,212,170,0.1)"><span class="lvl-name"
+                        style="color:var(--accent)">LOGIC</span><span class="lvl-desc">Algorithm steps</span></div>
+            </div>
+            <pre style="margin-top:14px"><span class="cm"># Enable multiple components and levels at once</span>
+export NS_LOG=UdpEchoClientApplication=level_all:\
+             UdpEchoServerApplication=level_all
+./ns3 run first</pre>
+        </div>
+
+        <div class="card">
+            <div class="section-eyebrow" style="margin-bottom:14px">Custom trace sinks — fine-grained observation</div>
+            <p style="font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:14px">The most powerful approach:
+                connect a C++ callback function directly to a specific trace source inside any ns-3 object. This fires
+                your function whenever that exact event occurs — no extra I/O overhead.</p>
+            <pre><span class="cm">// 1. Define a trace sink callback</span>
+<span class="ck">static void</span>
+<span class="cf">RxDrop</span>(<span class="ck">Ptr</span>&lt;<span class="ck">const</span> Packet&gt; p) {
+  <span class="cf">NS_LOG_UNCOND</span>(<span class="cs">"RxDrop at "</span> &lt;&lt; <span class="cf">Simulator::Now</span>().<span class="cn">GetSeconds</span>());
+}
+
+<span class="cm">// 2. Connect to a trace source on a specific device</span>
+devices.<span class="cn">Get</span>(1)-&gt;<span class="cn">TraceConnectWithoutContext</span>(
+  <span class="cs">"PhyRxDrop"</span>, <span class="cf">MakeCallback</span>(&amp;RxDrop));
+
+<span class="cm">// Now RxDrop() fires every time node 1's device drops a packet</span></pre>
+        </div>
+    </section>
+
+    <!-- CHEATSHEET -->
+    <section id="cheatsheet">
+        <div class="section-eyebrow">Chapter 07</div>
+        <h2 class="section-title">Quick reference</h2>
+        <p class="section-sub">The most commonly used helpers, classes, and commands — all in one place.</p>
+
+        <div class="card" style="margin-bottom:20px">
+            <div class="section-eyebrow" style="margin-bottom:14px">Common helper classes</div>
+            <div class="cheat-grid">
+                <div class="cheat-item">
+                    <div class="cheat-label">Link</div>
+                    <div class="cheat-name">PointToPointHelper</div>
+                    <div class="cheat-desc">Builds dedicated P2P links. Set DataRate on device, Delay on channel.</div>
+                    <code class="cheat-code">.Install(nodes)</code>
+                </div>
+                <div class="cheat-item">
+                    <div class="cheat-label">Link</div>
+                    <div class="cheat-name">CsmaHelper</div>
+                    <div class="cheat-desc">Builds shared Ethernet-like bus connections. All nodes share bandwidth.
+                    </div><code class="cheat-code">.Install(csmaNodes)</code>
+                </div>
+                <div class="cheat-item">
+                    <div class="cheat-label">WiFi</div>
+                    <div class="cheat-name">WifiHelper</div>
+                    <div class="cheat-desc">Configures 802.11 standard (a/b/g/n/ac/ax). Pairs with Phy and Mac helpers.
+                    </div><code class="cheat-code">.SetStandard()</code>
+                </div>
+                <div class="cheat-item">
+                    <div class="cheat-label">Protocol</div>
+                    <div class="cheat-name">InternetStackHelper</div>
+                    <div class="cheat-desc">Installs full TCP/IP protocol stack including IPv4, IPv6, TCP, UDP, ARP.
+                    </div><code class="cheat-code">.Install(nodes)</code>
+                </div>
+                <div class="cheat-item">
+                    <div class="cheat-label">Address</div>
+                    <div class="cheat-name">Ipv4AddressHelper</div>
+                    <div class="cheat-desc">Assigns IP addresses from a subnet to a NetDeviceContainer.</div><code
+                        class="cheat-code">.Assign(devs)</code>
+                </div>
+                <div class="cheat-item">
+                    <div class="cheat-label">App</div>
+                    <div class="cheat-name">UdpEchoServerHelper</div>
+                    <div class="cheat-desc">Simple UDP echo server on a given port. Returns ApplicationContainer.</div>
+                    <code class="cheat-code">.Install(node)</code>
+                </div>
+                <div class="cheat-item">
+                    <div class="cheat-label">App</div>
+                    <div class="cheat-name">UdpEchoClientHelper</div>
+                    <div class="cheat-desc">Sends UDP packets to a server address/port. Configure MaxPackets,
+                        PacketSize, Interval.</div><code class="cheat-code">.Install(node)</code>
+                </div>
+                <div class="cheat-item">
+                    <div class="cheat-label">Routing</div>
+                    <div class="cheat-name">Ipv4GlobalRoutingHelper</div>
+                    <div class="cheat-desc">Auto-computes routing tables for the entire topology. Must call after all
+                        interfaces are configured.</div><code class="cheat-code">::PopulateRoutingTables()</code>
+                </div>
+                <div class="cheat-item">
+                    <div class="cheat-label">Trace</div>
+                    <div class="cheat-name">AsciiTraceHelper</div>
+                    <div class="cheat-desc">Creates output streams for ASCII trace files. Pass to EnableAsciiAll().
+                    </div><code class="cheat-code">.CreateFileStream()</code>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-bottom:20px">
+            <div class="section-eyebrow" style="margin-bottom:14px">Simulator control</div>
+            <pre><span class="cf">Simulator::Run</span>();           <span class="cm">// Start event loop</span>
+<span class="cf">Simulator::Stop</span>(<span class="cf">Seconds</span>(10)); <span class="cm">// Schedule a stop time</span>
+<span class="cf">Simulator::Now</span>();           <span class="cm">// Get current sim time → Time object</span>
+<span class="cf">Simulator::Schedule</span>(        <span class="cm">// Schedule a future event</span>
+  <span class="cf">Seconds</span>(5.0),
+  &amp;MyFunction, arg1);
+<span class="cf">Simulator::Destroy</span>();       <span class="cm">// Clean up — always call at end</span></pre>
+        </div>
+
+        <div class="card">
+            <div class="section-eyebrow" style="margin-bottom:14px">Essential ns3 CLI commands</div>
+            <pre><span class="cm"># Configure with all options</span>
+./ns3 configure --build-profile=debug --enable-examples --enable-tests
+
+<span class="cm"># Build everything</span>
+./ns3 build
+
+<span class="cm"># Run a built-in example</span>
+./ns3 run first
+
+<span class="cm"># Run your own script from scratch/</span>
+./ns3 run scratch/my-sim
+
+<span class="cm"># Pass args to simulation</span>
+./ns3 run 'first --nPackets=5'
+
+<span class="cm"># Print available args</span>
+./ns3 run 'first --PrintHelp'
+
+<span class="cm"># Run tests</span>
+./test.py
+
+<span class="cm"># Clean build artifacts</span>
+./ns3 clean</pre>
+        </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="quiz">
+        <div class="section-eyebrow">Chapter 08</div>
+        <h2 class="section-title">Test yourself</h2>
+        <p class="section-sub">10 questions covering everything in this guide. Click an answer to reveal the
+            explanation.</p>
+
+        <div class="card" style="max-width:620px">
+            <div id="quiz-container"></div>
+        </div>
+    </section>
+
+    <!-- RESOURCES -->
+    <section id="resources" style="padding-bottom:40px">
+        <div class="section-eyebrow">Resources</div>
+        <h2 class="section-title">Go deeper</h2>
+        <p class="section-sub">Official documentation, community links, and tools to continue your ns-3 journey.</p>
+        <div class="resource-list">
+            <a href="https://www.nsnam.org/docs/tutorial/html/" target="_blank" class="resource-item">
+                <div class="resource-icon">📖</div>
+                <div>
+                    <div class="resource-name">Official ns-3 Tutorial</div>
+                    <div class="resource-url">nsnam.org/docs/tutorial/html/</div>
+                </div>
+                <div class="resource-arrow">↗</div>
+            </a>
+            <a href="https://www.nsnam.org/docs/manual/html/" target="_blank" class="resource-item">
+                <div class="resource-icon">📚</div>
+                <div>
+                    <div class="resource-name">ns-3 Manual (advanced)</div>
+                    <div class="resource-url">nsnam.org/docs/manual/html/</div>
+                </div>
+                <div class="resource-arrow">↗</div>
+            </a>
+            <a href="https://www.nsnam.org/doxygen/" target="_blank" class="resource-item">
+                <div class="resource-icon">🔍</div>
+                <div>
+                    <div class="resource-name">API Doxygen reference</div>
+                    <div class="resource-url">nsnam.org/doxygen/</div>
+                </div>
+                <div class="resource-arrow">↗</div>
+            </a>
+            <a href="https://gitlab.com/nsnam/ns-3-dev" target="_blank" class="resource-item">
+                <div class="resource-icon">🦊</div>
+                <div>
+                    <div class="resource-name">GitLab source repository</div>
+                    <div class="resource-url">gitlab.com/nsnam/ns-3-dev</div>
+                </div>
+                <div class="resource-arrow">↗</div>
+            </a>
+            <a href="https://www.nsnam.org/wiki/" target="_blank" class="resource-item">
+                <div class="resource-icon">🌐</div>
+                <div>
+                    <div class="resource-name">Community Wiki — FAQs, contributed code, troubleshooting</div>
+                    <div class="resource-url">nsnam.org/wiki/</div>
+                </div>
+                <div class="resource-arrow">↗</div>
+            </a>
+            <a href="https://www.nsnam.org/docs/installation/html/" target="_blank" class="resource-item">
+                <div class="resource-icon">⚙️</div>
+                <div>
+                    <div class="resource-name">Installation Guide (all platforms)</div>
+                    <div class="resource-url">nsnam.org/docs/installation/html/</div>
+                </div>
+                <div class="resource-arrow">↗</div>
+            </a>
+        </div>
+    </section>
+
+    <footer>
+        <div>Built from the ns-3 Tutorial (ns-3.47 · Apr 2026) · Free to use and share</div>
+        <div style="margin-top:6px;color:#2d3748">ns-3 project · GNU GPLv2 · nsnam.org</div>
+    </footer>
+
+    <script>
+        // SMOOTH SCROLL
+        function scrollTo(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // STACK LAYERS
+        function toggleLayer(id) {
+            const el = document.getElementById('detail-' + id);
+            el.classList.toggle('open');
+        }
+
+        // TOPO TABS
+        function showTopo(id, btn) {
+            document.querySelectorAll('.topo-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.topo-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('topo-' + id).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        // QUIZ
+        const questions = [
+            { q: 'What kind of simulator is ns-3?', opts: ['Real-time packet forwarder', 'Discrete-event network simulator', 'Hardware emulator', 'Protocol fuzzer'], correct: 1, exp: 'ns-3 is a discrete-event simulator: network events are C++ function calls fired in chronological order by a central scheduler. No real time passes.' },
+            { q: 'Which class is the fundamental unit that every other object attaches to?', opts: ['Application', 'NetDevice', 'Node', 'Channel'], correct: 2, exp: 'The Node is the foundation. Everything — NetDevices, protocol stacks, Applications — is attached to a Node or to something on a Node.' },
+            { q: 'What does the NetDevice abstraction model?', opts: ['Only the software driver', 'Only the hardware NIC', 'Both the software driver and simulated hardware together', 'The IP protocol stack'], correct: 2, exp: 'NetDevice covers both the software driver and simulated hardware. It is installed on a Node to allow communication via a Channel.' },
+            { q: 'Which command configures the ns-3 build with examples enabled?', opts: ['./ns3 build --examples', './ns3 configure --enable-examples', 'cmake .. -DEXAMPLES=ON', './waf configure'], correct: 1, exp: 'The ./ns3 script wraps CMake. Use ./ns3 configure --enable-examples --enable-tests to prepare the build.' },
+            { q: 'What does InternetStackHelper::Install() do?', opts: ['Creates TCP sockets', 'Assigns IP addresses', 'Installs TCP/IP protocol stack on nodes', 'Configures physical layer'], correct: 2, exp: 'InternetStackHelper::Install() adds IPv4/v6, TCP, UDP, ARP protocols to the specified nodes. Must be called before IP address assignment.' },
+            { q: 'What trace format can be opened directly in Wireshark?', opts: ['ASCII trace (.tr)', 'NS_LOG output', 'pcap files (.pcap)', 'XML NetAnim files'], correct: 2, exp: 'pcap (packet capture) is the standard format used by Wireshark, tcpdump, and many other network analysis tools. EnablePcapAll() generates these files.' },
+            { q: 'What does Simulator::Run() do?', opts: ['Compiles your script', 'Starts the discrete-event processing loop', 'Creates and connects nodes', 'Opens a visualization window'], correct: 1, exp: 'Simulator::Run() starts the event loop, firing scheduled C++ callbacks in chronological order until no more events exist or Simulator::Stop() time is reached.' },
+            { q: 'Which helper is used to build a shared Ethernet-like bus topology?', opts: ['PointToPointHelper', 'WifiHelper', 'CsmaHelper', 'BusNetworkHelper'], correct: 2, exp: 'CsmaHelper builds CSMA (Carrier Sense Multiple Access) connections — the model for classic Ethernet shared buses used in second.cc.' },
+            { q: 'How do you set a node position for WiFi simulations?', opts: ['NodeContainer::SetPosition()', 'MobilityHelper + MobilityModel', 'WifiHelper::SetPosition()', 'Ipv4AddressHelper'], correct: 1, exp: 'MobilityHelper configures node positions and movement patterns. WiFi simulations require mobility models because the propagation depends on physical distance.' },
+            { q: 'What is the ns-3 attribute system used for?', opts: ['Naming nodes', 'Configuring model parameters without recompiling', 'Scheduling simulation events', 'Routing packets between nodes'], correct: 1, exp: 'The attribute system lets you read and write typed parameters of any ns-3 object at runtime — via SetAttribute(), Config::Set(), or wildcard Config::Set() paths.' },
+        ];
+
+        let current = 0;
+        let answered = false;
+        const answered_arr = new Array(questions.length).fill(false);
+
+        function renderQuiz() {
+            const q = questions[current];
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = `
+    <div class="quiz-num">Question ${current + 1} of ${questions.length}</div>
+    <div class="quiz-q">${q.q}</div>
+    <div class="quiz-opts">
+      ${q.opts.map((o, i) => `<button class="quiz-opt" onclick="answer(${i})" id="opt-${i}">${o}</button>`).join('')}
+    </div>
+    <div id="quiz-feedback" style="display:none"></div>
+    <div class="quiz-nav">
+      <div class="quiz-dots">
+        ${questions.map((_, i) => `<div class="qdot ${i < current ? 'done' : i === current ? 'current' : ''}"></div>`).join('')}
+      </div>
+      <button id="next-btn" style="display:none" class="btn btn-outline" style="font-size:12px" onclick="nextQ()">Next →</button>
+    </div>
+  `;
+            answered = false;
+        }
+
+        function answer(i) {
+            if (answered) return;
+            answered = true;
+            answered_arr[current] = true;
+            const q = questions[current];
+            document.querySelectorAll('.quiz-opt').forEach((el, idx) => {
+                el.disabled = true;
+                if (idx === q.correct) el.classList.add('correct');
+                else if (idx === i) el.classList.add('wrong');
+            });
+            const fb = document.getElementById('quiz-feedback');
+            fb.style.display = 'block';
+            fb.className = 'quiz-feedback ' + (i === q.correct ? 'good' : 'bad');
+            fb.textContent = (i === q.correct ? '✓ Correct! ' : '✗ Not quite. ') + q.exp;
+            document.getElementById('next-btn').style.display = 'inline-flex';
+        }
+
+        function nextQ() {
+            current = (current + 1) % questions.length;
+            renderQuiz();
+        }
+
+        renderQuiz();
+
+        // Active nav on scroll
+        const sections = ['what', 'arch', 'setup', 'script', 'topology', 'tracing', 'cheatsheet', 'quiz'];
+        const links = document.querySelectorAll('.nav-link');
+        window.addEventListener('scroll', () => {
+            let active = '';
+            sections.forEach(id => {
+                const el = document.getElementById(id);
+                if (el && window.scrollY >= el.offsetTop - 100) active = id;
+            });
+            links.forEach(l => {
+                const t = l.textContent.toLowerCase().replace(/\s/g, '');
+                l.classList.toggle('active', active && (t.includes(active) || active.includes(t.substring(0, 4))));
+            });
+        });
+    </script>
+</body>
+
+</html>

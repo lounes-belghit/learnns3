@@ -1,2 +1,2 @@
 # learnns3
-web site to learn ns3 from scratch
+Interactive website to learn NS3 from scratch
